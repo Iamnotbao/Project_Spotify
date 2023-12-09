@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 
 import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
@@ -29,9 +29,13 @@ const Login = () => {
         await axios(authOptions).then( async response => {
             const token = response.data.access_token;
            try{
+            if(token){
+            const expiration = new Date(token.accessTokenExpirationDate).getTime();
             await AsyncStorage.setItem('token',token);
+            await AsyncStorage.setItem('expiration',expiration.toString());
             console.log('Storage successfully!!!')
-            navigation.navigate('Main');
+             navigation.navigate("Main_Screen");
+            }
            }
            catch(error){
             console.log('No value for Storaging!!!')
@@ -43,6 +47,34 @@ const Login = () => {
 
         });
     }
+
+useEffect(()=>{
+  const checkToken = async () =>{
+     const access_token = await AsyncStorage.getItem('token');
+     const expiration_token= await AsyncStorage.getItem('expiration');
+     console.log("access :",access_token);
+     console.log("expiration :",expiration_token);
+
+     if(access_token && expiration_token){
+        const current_time = Date.now();
+        if(current_time < parseInt(expiration_token)){
+            navigation.replace("Main_Screen");
+        }else{
+            await AsyncStorage.removeItem('token')
+            await AsyncStorage.removeItem('expiration')
+        }
+     }
+  }
+  checkToken(); 
+
+
+},[])
+
+
+
+
+
+
     return (
         <LinearGradient
             colors={["#040306", "#131624"]}
