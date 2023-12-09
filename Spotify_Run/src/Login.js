@@ -6,8 +6,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { authorize } from "react-native-app-auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 const Login = () => {
-
+    const navigation = useNavigation();
     const qs = require('qs');
     const Buffer = require('buffer').Buffer;
     var client_id = '62a47492eec04acd9c378e883d88eca2';
@@ -30,6 +31,7 @@ const Login = () => {
            try{
             await AsyncStorage.setItem('token',token);
             console.log('Storage successfully!!!')
+            navigation.navigate('Main');
            }
            catch(error){
             console.log('No value for Storaging!!!')
