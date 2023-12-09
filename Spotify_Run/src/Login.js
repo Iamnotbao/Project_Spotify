@@ -1,4 +1,6 @@
 import React from "react";
+import axios from "axios";
+
 import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
@@ -6,38 +8,39 @@ import { authorize } from "react-native-app-auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const Login = () => {
 
-    const config = {
-        clientId: "62a47492eec04acd9c378e883d88eca2",
-        clientSecret: "7c18f624d4134f14861f4059cb697055",
-        redirectUrl: "http://localhost:8081/callback",
-        scopes: [
-        "user-read-email",
-        "user-library-read",
-        "user-read-recently-played",
-        "user-top-read",
-        "playlist-read-private",
-        "playlist-read-collaborative",
-        "playlist-modify-public"
-        ],
-        serviceConfiguration: {
-            authorizationEndpoint: 'https://accounts.spotify.com/authorize',
-            tokenEndpoint: 'https://accounts.spotify.com/api/token',
+    const qs = require('qs');
+    const Buffer = require('buffer').Buffer;
+    var client_id = '62a47492eec04acd9c378e883d88eca2';
+    var client_secret = '7c18f624d4134f14861f4059cb697055';
+
+    var authOptions = {
+        method: 'POST',
+        url: 'https://accounts.spotify.com/api/token',
+        headers: {
+            'Authorization': 'Basic ' + (Buffer.from(client_id + ':' + client_secret).toString('base64')),
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
+        data: qs.stringify({
+            grant_type: 'client_credentials'
+        })
     };
-    const authenticate = async () => {
-        try {
-            const authState = await authorize(config);
-            console.log(authState);
-        } catch (error) {
-            console.log('Failed to authenticate', error);
-        }
-    };
+    async function Run() {
+        await axios(authOptions).then( async response => {
+            const token = response.data.access_token;
+           try{
+            await AsyncStorage.setItem('token',token);
+            console.log('Storage successfully!!!')
+           }
+           catch(error){
+            console.log('No value for Storaging!!!')
+           }
+         
+        })
+        .catch(error => {
+            console.error(error);
 
-
-
-
-
-
+        });
+    }
     return (
         <LinearGradient
             colors={["#040306", "#131624"]}
@@ -49,7 +52,7 @@ const Login = () => {
             </SafeAreaView>
             <View style={{ height: 80 }} />
             <TouchableOpacity
-                onPress={authenticate} 
+                onPress={Run}
                 style={{
                     backgroundColor: "#1DB964", padding: 10, marginLeft: "auto", marginRight: "auto", width: 300, borderRadius: 25,
                     alignItems: "center", justifyContent: "center", marginVertical: 10
