@@ -77,9 +77,9 @@ android {
     namespace "com.spotify_run"
     defaultConfig {
         applicationId "com.spotify_run"
-        manifestPlaceholders = [appAuthRedirectScheme: 'http://localhost:8081']
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        manifestPlaceholders = [appAuthRedirectScheme: 'spotifyapp']
         versionCode 1
         versionName "1.0"
     }
