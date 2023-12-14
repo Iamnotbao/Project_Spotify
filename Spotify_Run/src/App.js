@@ -39,7 +39,7 @@ function Main() {
                 name="Home"
                 component={HomeScreen}
                 options={{
-                    tabBarLabel: 'Profile',
+                    tabBarLabel: 'Home',
                     tabBarIcon: ({ color }) => (
                         <MaterialCommunityIcons name="account" color={color} size={26} />),
                     // tabBarIcon: ({ focused }) => focused ? (
@@ -56,7 +56,7 @@ function Main() {
                 name="Profile"
                 component={ProfileScreen}
                 options={{
-                    tabBarLabel: "Home",
+                    tabBarLabel: "Profile",
                     headerShown: false,
                     tabBarLabelStyle: { color: "red" },
                     tabBarIcon: 'format-list-bulleted',

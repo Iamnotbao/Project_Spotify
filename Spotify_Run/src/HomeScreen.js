@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, Image, ActivityIndicator, TouchableOpacity, ScrollView, FlatList } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import axios from "axios";
 
 
 
@@ -11,6 +13,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 const HomeScreen = () => {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [familiar_song, setFamiliarSong] = useState(null);
+  const [topAprtist,setTopArtist]= useState([]);
 
   const fetchData = async () => {
     const value = await AsyncStorage.getItem('token');
@@ -44,22 +48,122 @@ const HomeScreen = () => {
     }
   }
 
+  const recentlySongs = async () => {
+    const value = await AsyncStorage.getItem('token');
+    if (value !== null) {
+      try {
+        const response = await axios.get('https://api.spotify.com/v1/me/player/recently-played?limit=6', {
+          headers: {
+            Authorization: `Bearer ${value}`,
+          },
+        })
+        const recent_songs = response.data.items;
+        setFamiliarSong(recent_songs);
+        setIsLoading(false);
+      }
+      catch (err) {
+        console.log(err.message);
+        if (err.response && err.response.status === 401) {
+          console.log('Token may be expired or invalid. Please re-authenticate.');
+        }
+        setIsLoading(false);
+      }
+    }
+  }
+
+  // console.log(familiar_song);
+
+
+  const Artists= async()=>{
+    const value = await AsyncStorage.getItem('token');
+    const type = "artists"
+    console.log(value)
+    if (value !== null) {
+        try{
+          const response = await axios.get(`https://api.spotify.com/v1/me/top/${type}`,{
+            headers: {
+              Authorization: `Bearer ${value}`,
+            },          
+          }) 
+          const top_artists = response.data.items;
+          setTopArtist(top_artists);
+          setIsLoading(false);
+          // console.log(top_artists)
+        }
+        catch(err){
+          console.log(err.message);
+          if (err.response && err.response.status === 401) {
+            console.log('Token may be expired or invalid. Please re-authenticate.');
+        }
+        setIsLoading(false);
+  }
+}
+}
+console.log(topAprtist)
+
+
   const message_User = message();
   useEffect(() => {
     fetchData();
+    Artists();
+    recentlySongs();
+    
   }, []);
 
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
+
+
+  // useEffect(()=>{
+  //   Artists();
+  // },[])
+
+// const Artists_Display = ({item})=>{
+//   return(
+// <View> </View>
+
+//   )
+
+// }
+
+  const Item = ({ item }) => {
+    return (
+      <TouchableOpacity style={{
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginHorizontal: 10,
+        marginVertical: 8,
+        backgroundColor: "#282828",
+        borderRadius: 4,
+        elevation: 3,
+      }}>
+        {data && data.images && data.images.length > 0 && (
+          <Image style={{
+            height: 60, width: 60
+          }}
+            source={{ uri: item.track.album.images[0].url }} />)}
+        <View style={{ flex: 1, marginHorizontal: 8, justifyContent: "center" }}>
+          <Text
+            numberOfLines={2}
+            style={{ fontSize: 15, fontWeight: "bold", color: "white" }}
+          >
+            {item.track.name}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    )
+
+  }
   return (
     <LinearGradient
       colors={["#040306", "#131624"]}
       style={{ flex: 1 }}>
 
-      <View>
-        <View style={{ flexDirection: "row", alignItems: "center" , justifyContent:"space-between"}}>
+      <ScrollView style={{ marginTop: 3 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
           {data && data.images && data.images.length > 0 && (
             <Image
               style={{
@@ -74,31 +178,96 @@ const HomeScreen = () => {
           )
           }
           <Text style={{ color: 'white', marginLeft: 5, fontSize: 16, fontWeight: 'bold', marginTop: 20, }}>{message_User}</Text>
-          <MaterialCommunityIcons  style={{marginLeft:220, marginTop:20}} name="lightning-bolt-outline" size={24} color="white" />
+          <MaterialCommunityIcons style={{ marginLeft: 220, marginTop: 20 }} name="lightning-bolt-outline" size={24} color="white" />
         </View>
-       <View style={{marginHorizontal:12, marginVertical:5, flexDirection:'row',alignItems:'center',gap:10}}> 
-        <TouchableOpacity
-        style={{
-          backgroundColor:"yellow"
-          ,fontWeight:'bold',borderRadius:30,padding:10,
+        <View style={{ marginHorizontal: 12, marginVertical: 5, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "yellow"
+              , fontWeight: 'bold', borderRadius: 30, padding: 10,
 
-        }}  
-        >
-          <Text style={{color:'black'}}>Music</Text>
-        </TouchableOpacity>
+            }}
+          >
+            <Text style={{ color: 'black' }}>Music</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-        style={{
-          backgroundColor:"yellow"
-          ,fontWeight:'bold',borderRadius:30,padding:10,
+          <TouchableOpacity
+            style={{
+              backgroundColor: "yellow"
+              , fontWeight: 'bold', borderRadius: 30, padding: 10,
 
-        }}  
-        >
-          <Text style={{color:'black'}}>Podcards & Shows</Text>
-        </TouchableOpacity>
-       </View>
-        
-      </View>
+            }}
+          >
+            <Text style={{ color: 'black' }}>Podcards & Shows</Text>
+          </TouchableOpacity>
+        </View>
+
+
+        <View style={{ height: 20 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <TouchableOpacity style={{
+              marginBottom: 10,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 10,
+              flex: 1,
+              marginHorizontal: 10,
+              marginVertical: 8,
+              backgroundColor: "#202020",
+              borderRadius: 4,
+              elevation: 3,
+            }}>
+              <LinearGradient colors={["#33006F", "#FFFFFF"]}>
+                <TouchableOpacity style={{ height: 60, width: 60, justifyContent: "center", alignItems: "center" }}>
+                  <AntDesign name="heart" size={24} color="black" />
+                </TouchableOpacity>
+              </LinearGradient>
+              <Text style={{ color: "white", fontSize: 13, fontWeight: "bold" }}>
+                Liked Songs
+              </Text>
+            </TouchableOpacity>
+            <View style={{
+              marginBottom: 10,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 10,
+              flex: 1,
+              marginHorizontal: 10,
+              marginVertical: 8,
+              backgroundColor: "#282828",
+              borderRadius: 4,
+              elevation: 3,
+            }}>
+              <Image
+                style={{ height: 55, width: 55 }}
+                source={{ uri: "https://i.pravatar.cc/180" }} />
+              <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold' }}>80's HipHop</Text>
+            </View>
+          </View>
+          <View>
+          </View>
+        </View>
+        <View style={{ marginTop: 60 }}>
+        <FlatList
+          data={familiar_song}
+          renderItem={Item}
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: "space-between" }}
+
+        />
+        </View>
+        <View>
+          <Text style={{color: "white",
+            fontSize: 20,
+            fontWeight: "bold",
+            marginHorizontal: 10,
+            marginTop: 10,}}>Your Favourite Artists</Text>
+          <ScrollView>
+            
+          </ScrollView>
+
+        </View>
+      </ScrollView>
     </LinearGradient>
   );
 };
