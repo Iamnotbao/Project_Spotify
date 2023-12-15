@@ -11,6 +11,7 @@ import ProfileScreen from "./ProfileScreen";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationContainer } from "@react-navigation/native";
 import Login from "./Login";
+import Favourite_Songs from "./Favourite";
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -80,6 +81,10 @@ function App_Run() {
                     component={Main}
                     options={{ headerShown: false }}
                 />
+                <Stack.Screen
+                    name="Favourite_Screen"
+                    component={Favourite_Songs}
+                    options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     )

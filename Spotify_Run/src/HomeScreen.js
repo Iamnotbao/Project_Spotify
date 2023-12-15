@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
 
 
 
@@ -14,8 +15,9 @@ const HomeScreen = () => {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [familiar_song, setFamiliarSong] = useState(null);
-  const [topAprtist,setTopArtist]= useState([]);
-
+  const [topAprtist, setTopArtist] = useState([]);
+  
+  const navigation= useNavigation();
   const fetchData = async () => {
     const value = await AsyncStorage.getItem('token');
     if (value !== null) {
@@ -74,32 +76,32 @@ const HomeScreen = () => {
   // console.log(familiar_song);
 
 
-  const Artists= async()=>{
+  const Artists = async () => {
     const value = await AsyncStorage.getItem('token');
     const type = "artists"
     console.log(value)
     if (value !== null) {
-        try{
-          const response = await axios.get(`https://api.spotify.com/v1/me/top/${type}`,{
-            headers: {
-              Authorization: `Bearer ${value}`,
-            },          
-          }) 
-          const top_artists = response.data.items;
-          setTopArtist(top_artists);
-          setIsLoading(false);
-          // console.log(top_artists)
-        }
-        catch(err){
-          console.log(err.message);
-          if (err.response && err.response.status === 401) {
-            console.log('Token may be expired or invalid. Please re-authenticate.');
+      try {
+        const response = await axios.get(`https://api.spotify.com/v1/me/top/${type}`, {
+          headers: {
+            Authorization: `Bearer ${value}`,
+          },
+        })
+        const top_artists = response.data.items;
+        setTopArtist(top_artists);
+        setIsLoading(false);
+        // console.log(top_artists)
+      }
+      catch (err) {
+        console.log(err.message);
+        if (err.response && err.response.status === 401) {
+          console.log('Token may be expired or invalid. Please re-authenticate.');
         }
         setIsLoading(false);
+      }
+    }
   }
-}
-}
-console.log(topAprtist)
+  console.log(topAprtist)
 
 
   const message_User = message();
@@ -107,7 +109,7 @@ console.log(topAprtist)
     fetchData();
     Artists();
     recentlySongs();
-    
+
   }, []);
 
   if (isLoading) {
@@ -120,13 +122,13 @@ console.log(topAprtist)
   //   Artists();
   // },[])
 
-// const Artists_Display = ({item})=>{
-//   return(
-// <View> </View>
+  // const Artists_Display = ({item})=>{
+  //   return(
+  // <View> </View>
 
-//   )
+  //   )
 
-// }
+  // }
 
   const Item = ({ item }) => {
     return (
@@ -140,7 +142,7 @@ console.log(topAprtist)
         borderRadius: 4,
         elevation: 3,
       }}>
-        {data && data.images && data.images.length > 0 && (
+        {item && (
           <Image style={{
             height: 60, width: 60
           }}
@@ -157,6 +159,52 @@ console.log(topAprtist)
     )
 
   }
+
+  const Artists_Display = ({ item }) => {
+    return (
+      <View style={{ margin: 10 }}>
+        {item && (
+          <Image
+            style={{ width: 110, height: 110, borderRadius: 5 }}
+            source={{ uri: item.images[0].url }}
+          />)}
+        {item && (
+          <Text
+            style={{
+              fontSize: 13,
+              fontWeight: "500",
+              color: "white",
+              marginTop: 10,
+            }}
+          >
+            {item?.name}
+          </Text>)}
+      </View>
+    );
+  }
+  const List_of_recent_Songs = ({ item }) => {
+    return (
+      <TouchableOpacity style={{justifyContent:'space-between' ,margin:10,}}>
+        {item && (
+          <Image
+            style={{ height: 110, width: 110, borderRadius: 5 }}
+            source={{ uri: item.track.album.images[0].url }} />
+        )}{item && (
+          <Text
+            style={{
+              fontSize: 13,
+              fontWeight: "500",
+              color: "white",
+              marginTop: 10,
+            }}>{item?.track?.name}</Text>
+        )}
+      </TouchableOpacity>
+    )
+  }
+
+
+
+
   return (
     <LinearGradient
       colors={["#040306", "#131624"]}
@@ -205,7 +253,9 @@ console.log(topAprtist)
 
         <View style={{ height: 20 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <TouchableOpacity style={{
+            <TouchableOpacity
+            onPress={()=> navigation.navigate('Favourite_Screen') }
+            style={{
               marginBottom: 10,
               flexDirection: "row",
               alignItems: "center",
@@ -248,24 +298,45 @@ console.log(topAprtist)
           </View>
         </View>
         <View style={{ marginTop: 60 }}>
-        <FlatList
-          data={familiar_song}
-          renderItem={Item}
-          numColumns={2}
-          columnWrapperStyle={{ justifyContent: "space-between" }}
+          <FlatList
+            data={familiar_song}
+            renderItem={Item}
+            numColumns={2}
+            columnWrapperStyle={{ justifyContent: "space-between" }}
 
-        />
+          />
         </View>
         <View>
-          <Text style={{color: "white",
+          <Text style={{
+            color: "white",
             fontSize: 20,
             fontWeight: "bold",
             marginHorizontal: 10,
-            marginTop: 10,}}>Your Favourite Artists</Text>
-          <ScrollView>
-            
-          </ScrollView>
-
+            marginTop: 10,
+          }}>Your Favourite Artists</Text>
+          <FlatList
+            data={topAprtist}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item, index }) => (
+              <Artists_Display item={item} key={index} />)}
+          />
+        </View>
+        <View style={{ marginTop:1}}>
+          <Text style={{
+            color: "white",
+            fontSize: 20,
+            fontWeight: "bold",
+            marginHorizontal: 10,
+            marginBottom: 10,
+          }}>Previous Track</Text>
+          <FlatList
+            data={familiar_song}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item, index }) => (
+              <List_of_recent_Songs item={item} key={index} />)}
+          />
         </View>
       </ScrollView>
     </LinearGradient>
