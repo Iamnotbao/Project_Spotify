@@ -12,6 +12,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { NavigationContainer } from "@react-navigation/native";
 import Login from "./Login";
 import Favourite_Songs from "./Favourite";
+import Song_Details from "./SongDetails";
+import Artists from "./Artists";
+import PlayList_Detail from "./Playlist_Detail";
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -85,6 +88,18 @@ function App_Run() {
                     name="Favourite_Screen"
                     component={Favourite_Songs}
                     options={{ headerShown: false }} />
+                    <Stack.Screen
+                    name="Infomation_Screen"
+                    component={Song_Details}
+                    options={{headerShown:false}}/>
+                    <Stack.Screen
+                    name="Artist_information"
+                    component={Artists}
+                    options={{headerShown:false}}/>
+                    <Stack.Screen
+                    name="playList"
+                    component={PlayList_Detail}
+                    options={{headerShown:false}}/>
             </Stack.Navigator>
         </NavigationContainer>
     )

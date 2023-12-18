@@ -16,8 +16,8 @@ const HomeScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [familiar_song, setFamiliarSong] = useState(null);
   const [topAprtist, setTopArtist] = useState([]);
-  
-  const navigation= useNavigation();
+
+  const navigation = useNavigation();
   const fetchData = async () => {
     const value = await AsyncStorage.getItem('token');
     if (value !== null) {
@@ -132,16 +132,18 @@ const HomeScreen = () => {
 
   const Item = ({ item }) => {
     return (
-      <TouchableOpacity style={{
-        flex: 1,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginHorizontal: 10,
-        marginVertical: 8,
-        backgroundColor: "#282828",
-        borderRadius: 4,
-        elevation: 3,
-      }}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Infomation_Screen', { item: item })}
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginHorizontal: 10,
+          marginVertical: 8,
+          backgroundColor: "#282828",
+          borderRadius: 4,
+          elevation: 3,
+        }}>
         {item && (
           <Image style={{
             height: 60, width: 60
@@ -162,7 +164,8 @@ const HomeScreen = () => {
 
   const Artists_Display = ({ item }) => {
     return (
-      <View style={{ margin: 10 }}>
+      <TouchableOpacity 
+      onPress={()=> navigation.navigate('Artist_information',{item:item})} style={{ margin: 10 }}>
         {item && (
           <Image
             style={{ width: 110, height: 110, borderRadius: 5 }}
@@ -179,12 +182,14 @@ const HomeScreen = () => {
           >
             {item?.name}
           </Text>)}
-      </View>
+      </TouchableOpacity>
     );
   }
   const List_of_recent_Songs = ({ item }) => {
     return (
-      <TouchableOpacity style={{justifyContent:'space-between' ,margin:10,}}>
+      <TouchableOpacity style={{ justifyContent: 'space-between', margin: 10, }}
+      onPress={()=> navigation.navigate('Infomation_Screen',{item:item})}>
+        
         {item && (
           <Image
             style={{ height: 110, width: 110, borderRadius: 5 }}
@@ -254,19 +259,19 @@ const HomeScreen = () => {
         <View style={{ height: 20 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <TouchableOpacity
-            onPress={()=> navigation.navigate('Favourite_Screen') }
-            style={{
-              marginBottom: 10,
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 10,
-              flex: 1,
-              marginHorizontal: 10,
-              marginVertical: 8,
-              backgroundColor: "#202020",
-              borderRadius: 4,
-              elevation: 3,
-            }}>
+              onPress={() => navigation.navigate('Favourite_Screen')}
+              style={{
+                marginBottom: 10,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                flex: 1,
+                marginHorizontal: 10,
+                marginVertical: 8,
+                backgroundColor: "#202020",
+                borderRadius: 4,
+                elevation: 3,
+              }}>
               <LinearGradient colors={["#33006F", "#FFFFFF"]}>
                 <TouchableOpacity style={{ height: 60, width: 60, justifyContent: "center", alignItems: "center" }}>
                   <AntDesign name="heart" size={24} color="black" />
@@ -322,7 +327,7 @@ const HomeScreen = () => {
               <Artists_Display item={item} key={index} />)}
           />
         </View>
-        <View style={{ marginTop:1}}>
+        <View style={{ marginTop: 1 }}>
           <Text style={{
             color: "white",
             fontSize: 20,
