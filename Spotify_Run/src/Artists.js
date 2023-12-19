@@ -89,7 +89,7 @@ const Artists = () => {
                     </View>
                 )}
                 <View>
-                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 10 }}>
+                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 10 } }>
                         <TouchableOpacity style={{
                             width: 30,
                             height: 30,

@@ -13,9 +13,7 @@ import Entypo from 'react-native-vector-icons/Entypo'
 import Feather from 'react-native-vector-icons/Feather'
 import { Play } from "./SongContext";
 import { BottomModal, ModalContent } from 'react-native-modals';
-import Sound from "react-native-sound";
 import TrackPlayer, { usePlaybackState, useProgress } from 'react-native-track-player';
-import ProgressBar from '@react-native-community/progress-bar-android';
 import Slider from '@react-native-community/slider';
 
 
@@ -26,6 +24,7 @@ const Favourite_Songs = () => {
     const [songs, setSongs] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const { presentSong, setPresentSong } = useContext(Play)
+    const [presentSongIndex, setPresentSongIndex] = useState();
     const [isPlaying, setIsPlaying] = useState(true);
     const circleSize = 12;
     const progress = useProgress();
@@ -70,6 +69,7 @@ const Favourite_Songs = () => {
 
     const playSongs = async () => {
         setPresentSong(songs[0])
+        setPresentSongIndex(0)
     }
     useEffect(() => {
         console.log(presentSong)
@@ -132,10 +132,14 @@ const searchHandle =()=>{
 
 
 
-    const Songs_Item = ({ item, onPress, isPlaying }) => {
+    const Songs_Item = ({ item, index, onPress, isPlaying }) => {
+
+        
         const onPress_Operation = async () => {
+            setPresentSongIndex(index)
             setPresentSong(item);
             onPress(item);
+            
         }
 
         return (
@@ -155,6 +159,22 @@ const searchHandle =()=>{
                 </View>
             </TouchableOpacity>
         )
+    }
+
+    const changePresentSong = (index) =>{
+        const length = songs.length -1;
+        if(presentSongIndex == 0 && index==-1){
+            setPresentSongIndex(length)
+            setPresentSong(songs[presentSongIndex])
+
+        } else
+        if(presentSongIndex == length && index==1){
+            setPresentSongIndex(0)
+            setPresentSong(songs[presentSongIndex])
+        }else{
+            setPresentSongIndex(presentSongIndex + index)
+            setPresentSong(songs[presentSongIndex])
+        }
     }
     return (
         <>
@@ -248,8 +268,10 @@ const searchHandle =()=>{
                     </TouchableOpacity>
                     <FlatList
                         data={songs}
-                        renderItem={({ item }) => (
-                            <Songs_Item item={item}
+                        renderItem={({ item, index }) => (
+                            <Songs_Item 
+                                item={item}
+                                index={index}
                                 onPress={play}
                                 isPlaying={item === presentSong} />
                         )} />
@@ -360,9 +382,9 @@ const searchHandle =()=>{
                                 marginTop: 20
                             }}>
                                 <TouchableOpacity><MaterialCommunityIcons name="cross-bolnisi" size={35} color="yellow" /></TouchableOpacity>
-                                <TouchableOpacity><Feather name="skip-back" size={35} color="white" /></TouchableOpacity>
+                                <TouchableOpacity onPress={()=>changePresentSong(-1)} ><Feather name="skip-back" size={35} color="white" /></TouchableOpacity>
                                 <TouchableOpacity onPress={ Pause_Handle }><FontAwesome name="pause-circle-o" size={45} color="white" /></TouchableOpacity>
-                                <TouchableOpacity><Feather name="skip-forward" size={35} color="white" /></TouchableOpacity>
+                                <TouchableOpacity onPress={()=>changePresentSong(1)}><Feather name="skip-forward" size={35} color="white" /></TouchableOpacity>
                                 <TouchableOpacity><Ionicons name="repeat-outline" size={35} color="yellow" /></TouchableOpacity>
                             </View>
                         </View>

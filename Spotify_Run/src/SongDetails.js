@@ -132,7 +132,8 @@ const Song_Details = () => {
                                 </View>
                                 <Entypo name="dots-three-vertical" size={24} color="yellow" />
                         </TouchableOpacity>
-                    ))}</View>
+                    ))}
+                    </View>
             </ScrollView>
         </LinearGradient>
     )

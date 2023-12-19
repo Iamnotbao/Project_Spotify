@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, ActivityIndicator, TouchableOpacity, ScrollView, FlatList } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import axios from "axios";
@@ -217,6 +216,7 @@ const HomeScreen = () => {
 
       <ScrollView style={{ marginTop: 3 }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
           {data && data.images && data.images.length > 0 && (
             <Image
               style={{
@@ -230,11 +230,13 @@ const HomeScreen = () => {
             />
           )
           }
+          </TouchableOpacity>
           <Text style={{ color: 'white', marginLeft: 5, fontSize: 16, fontWeight: 'bold', marginTop: 20, }}>{message_User}</Text>
           <MaterialCommunityIcons style={{ marginLeft: 220, marginTop: 20 }} name="lightning-bolt-outline" size={24} color="white" />
         </View>
         <View style={{ marginHorizontal: 12, marginVertical: 5, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           <TouchableOpacity
+          onPress={()=> navigation.navigate('Favourite_Screen')}
             style={{
               backgroundColor: "yellow"
               , fontWeight: 'bold', borderRadius: 30, padding: 10,

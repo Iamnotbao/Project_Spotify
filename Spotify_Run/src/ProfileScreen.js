@@ -5,13 +5,14 @@ import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native"
 import LinearGradient from "react-native-linear-gradient";
 import Entypo from 'react-native-vector-icons/Entypo'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 
 const ProfileScreen = () => {
     const [data, setData] = useState(null);
     const [listSongs, setListSong] = useState(null);
     const [isLoading, setIsLoading] = useState(true)
-    const navigation =useNavigation();
+    const navigation = useNavigation();
     const fetchData = async () => {
         const value = await AsyncStorage.getItem('token');
         console.log(value)
@@ -69,7 +70,15 @@ const ProfileScreen = () => {
         style={{ flex: 1 }}
     >
         <ScrollView style={{ marginTop: 30 }}>
+        <View >
+                    <TouchableOpacity
+                        style={{ marginHorizontal: 10 }}
+                        onPress={() => navigation.goBack()}>
+                        <Ionicons name="arrow-back-circle-sharp" size={30} color="#F0E68C" />
+                    </TouchableOpacity>
+                </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+               
                 <View >
                     {data && data.images && data.images.length > 0 && (
                         <Image
@@ -89,11 +98,11 @@ const ProfileScreen = () => {
                         <Text style={{ color: "#8181a3", fontSize: 12, fontWeight: 'bold' }}>{data?.email}</Text>
                     </View>
 
-                    
-                        <TouchableOpacity onPress={()=>navigation.navigate('Login')}>
-                            <Entypo name="log-out" size={24} color="white" />
-                        </TouchableOpacity>
-                  
+
+                    <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                        <Entypo name="log-out" size={24} color="white" />
+                    </TouchableOpacity>
+
                 </View>
 
 
@@ -103,7 +112,7 @@ const ProfileScreen = () => {
                 <View style={{ padding: 15 }}>
                     {listSongs && listSongs.map((listsong, index) => (
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginVertical: 11 }}
-                        onPress={()=> navigation.navigate('playList',{item:listsong})}
+                            onPress={() => navigation.navigate('playList', { item: listsong })}
                         >
                             <Image source={{
                                 uri: listsong?.images[0]?.url
