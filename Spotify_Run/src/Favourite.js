@@ -135,7 +135,8 @@ const searchHandle =()=>{
     const Songs_Item = ({ item, index, onPress, isPlaying }) => {
 
         
-        const onPress_Operation = async () => {
+        const onPress_Operation = async () => 
+        { 
             setPresentSongIndex(index)
             setPresentSong(item);
             onPress(item);
@@ -153,7 +154,7 @@ const searchHandle =()=>{
                     <Text style={{ marginTop: 4, color: "#989898" }}>{item?.track.artists[0].name}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginHorizontal: 10 }}>
-                    <FontAwesome name="heart" size={24} color="#1D8954" />
+                    <FontAwesome name="heart" size={24} color="yellow" />
                     <Entypo name="dots-three-vertical" size={24} color="#C0C0C0" />
 
                 </View>
@@ -171,11 +172,13 @@ const searchHandle =()=>{
         if(presentSongIndex == length && index==1){
             setPresentSongIndex(0)
             setPresentSong(songs[presentSongIndex])
-        }else{
-            setPresentSongIndex(presentSongIndex + index)
-            setPresentSong(songs[presentSongIndex])
-        }
+        } if(presentSongIndex <= length){
+            console.log(presentSongIndex)
+            setPresentSong( setPresentSongIndex(presentSongIndex + index))
+        } 
+        
     }
+   
     return (
         <>
             <LinearGradient colors={["#614385", "#516395"]} style={{ flex: 1 }}>
